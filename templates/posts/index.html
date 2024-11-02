@@ -1,0 +1,48 @@
+{% extends 'posts/base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        {% for post in posts %}
+            <article class="card">
+                <h2 class="card-title">
+                    <a href="{% url 'post_detail' post.pk %}" class="text-decoration-none text-dark">
+                        {{ post.title }}
+                    </a>
+                </h2>
+                <p class="text-muted">Published on {{ post.created_at|date:"F j, Y" }}</p>
+                <div class="card-text">
+                    {{ post.body|truncatewords:30 }}
+                </div>
+                <a href="{% url 'post_detail' post.pk %}" class="btn btn-primary mt-3">Read More</a>
+            </article>
+        {% empty %}
+            <div class="alert alert-info">No posts available.</div>
+        {% endfor %}
+
+        {% if posts.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if posts.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in posts.paginator.page_range %}
+                        <li class="page-item {% if posts.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {% if posts.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ posts.next_page_number }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
